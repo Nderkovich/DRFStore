@@ -1,14 +1,54 @@
+from typing import List
+
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
 class Role(models.Model):
+    CLIENT = 'Client'
+    ADMIN = 'Admin'
+
+    ROLES = (
+        (CLIENT, 'Client'),
+        (ADMIN, 'Admin')
+    )
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, choices=ROLES)
 
 
-class User(AbstractBaseUser):
+class UserManager(BaseUserManager):
+    def _create_user(self, username, password, roles: List[Role], **extra_fields):
+        values = [username]
+        field_value_map = dict(zip(self.model.REQUIRED_FIELDS, values))
+        for field_name, value in field_value_map.items():
+            if not value:
+                raise ValueError('The {} value must be set'.format(field_name))
+
+        username = self.normalize_email(username)
+        user = self.model(
+            username=username,
+            **extra_fields
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        for role in roles:
+            user.roles.add(role.id)
+        return user
+
+    def create_user(self, username, password=None, **extra_fields):
+        roles = [Role.objects.get(name=Role.CLIENT)]
+        extra_fields.setdefault('is_superuser', False)
+        return self._create_user(username, password, roles, **extra_fields)
+
+    def create_superuser(self, username, password=None, **extra_fields):
+        roles = [Role.objects.get(name=Role.ADMIN), Role.objects.get(name=Role.CLIENT)]
+        extra_fields.setdefault('is_superuser', True)
+
+        return self._create_user(username, password, roles, **extra_fields)
+
+
+class User(AbstractBaseUser, PermissionsMixin):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     username = models.CharField(max_length=50, unique=True)
@@ -19,6 +59,10 @@ class User(AbstractBaseUser):
     roles = models.ManyToManyField(Role)
 
     USERNAME_FIELD = 'username'
+
+    REQUIRED_FIELDS = ['date_of_birth']
+
+    objects = UserManager()
 
 
 class Product(models.Model):
