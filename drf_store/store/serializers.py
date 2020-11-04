@@ -41,6 +41,19 @@ class ProductSerializer(serializers.ModelSerializer):
 
 # Order views serializer
 class OrderSerializer(serializers.ModelSerializer):
+    CLIENT_ALLOWED_STATUS = ('IN_PROGRESS', 'FINISHED',)
+    status = serializers.ChoiceField(choices=CLIENT_ALLOWED_STATUS)
+
     class Meta:
         model = Order
-        fields = '__all__'
+        fields = ['name', 'status', 'products']
+
+
+class OrderAdminSerializer(serializers.ModelSerializer):
+    ADMIN_ALLOWED_STATUS = ('IN_PROGRESS', 'APPROVED', 'DECLINED')
+    status = serializers.ChoiceField(choices=ADMIN_ALLOWED_STATUS)
+    user = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'name', 'status', 'products', 'user', 'create_time', 'update_time']
