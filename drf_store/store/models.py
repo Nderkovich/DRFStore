@@ -58,6 +58,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     roles = models.ManyToManyField(Role)
 
+    @property
+    def is_staff(self):
+        return self.roles.filter(name=Role.ADMIN).exists()
+
     USERNAME_FIELD = 'username'
 
     REQUIRED_FIELDS = ['date_of_birth']
