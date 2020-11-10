@@ -1,4 +1,4 @@
-from store.models import User, Order
+from store.models import User, Order, Product
 from rest_framework import serializers
 
 
@@ -30,6 +30,13 @@ class UserDetailSerializer(serializers.ModelSerializer):
             user.set_password(password)
             user.save()
         return User.objects.filter(username=self.data['username']).update(**self.validated_data)
+
+
+# Product
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ['description', 'price']
 
 
 # Order views serializer
