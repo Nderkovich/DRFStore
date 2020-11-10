@@ -62,6 +62,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def is_staff(self):
         return self.roles.filter(name=Role.ADMIN).exists()
 
+    def save(self, *args, **kwargs):
+        self.username = self.username.lower()
+        return super(User, self).save(*args, **kwargs)
+
     USERNAME_FIELD = 'username'
 
     REQUIRED_FIELDS = ['date_of_birth']
