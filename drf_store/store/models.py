@@ -36,12 +36,12 @@ class UserManager(BaseUserManager):
             user.roles.add(role.id)
         return user
 
-    def create_user(self, username, password=None, **extra_fields):
+    def create_user(self, username, password, **extra_fields):
         roles = [Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', False)
         return self._create_user(username, password, roles, **extra_fields)
 
-    def create_superuser(self, username, password=None, **extra_fields):
+    def create_superuser(self, username,  password, **extra_fields):
         roles = [Role.objects.get(name=Role.ADMIN), Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', True)
 
