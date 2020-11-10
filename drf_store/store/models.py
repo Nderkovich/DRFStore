@@ -18,8 +18,8 @@ class Role(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def _create_user(self, username, password, date_of_birth, roles: List[Role], **extra_fields):
-        values = [date_of_birth]
+    def _create_user(self, username, password, date_of_birth, email, roles: List[Role], **extra_fields):
+        values = [date_of_birth, email]
         field_value_map = dict(zip(self.model.REQUIRED_FIELDS, values))
         if not password or len(password) < 8:
             raise ValueError('Password length is invalid')
@@ -39,21 +39,22 @@ class UserManager(BaseUserManager):
             user.roles.add(role.id)
         return user
 
-    def create_user(self, username, password, date_of_birth, **extra_fields):
+    def create_user(self, username, password, date_of_birth, email, **extra_fields):
         roles = [Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, password, date_of_birth, roles, **extra_fields)
+        return self._create_user(username, password, date_of_birth, email, roles, **extra_fields)
 
-    def create_superuser(self, username,  password, date_of_birth, **extra_fields):
+    def create_superuser(self, username,  password, date_of_birth, email, **extra_fields):
         roles = [Role.objects.get(name=Role.ADMIN), Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', True)
-        return self._create_user(username, password, date_of_birth, roles,  **extra_fields)
+        return self._create_user(username, password, date_of_birth, email, roles,  **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     username = models.CharField(max_length=50, unique=True)
+    email = models.EmailField(max_length=70, null=False, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     date_of_birth = models.DateField(null=False)
@@ -70,7 +71,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     USERNAME_FIELD = 'username'
 
-    REQUIRED_FIELDS = ['date_of_birth']
+    REQUIRED_FIELDS = ['date_of_birth', 'email']
 
     objects = UserManager()
 
