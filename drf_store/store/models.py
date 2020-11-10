@@ -18,8 +18,8 @@ class Role(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def _create_user(self, username, password, roles: List[Role], **extra_fields):
-        values = [username]
+    def _create_user(self, username, password, date_of_birth, roles: List[Role], **extra_fields):
+        values = [date_of_birth]
         field_value_map = dict(zip(self.model.REQUIRED_FIELDS, values))
         for field_name, value in field_value_map.items():
             if not value:
@@ -28,6 +28,7 @@ class UserManager(BaseUserManager):
         username = self.normalize_email(username)
         user = self.model(
             username=username,
+            **field_value_map,
             **extra_fields
         )
         user.set_password(password)
@@ -36,16 +37,15 @@ class UserManager(BaseUserManager):
             user.roles.add(role.id)
         return user
 
-    def create_user(self, username, password, **extra_fields):
+    def create_user(self, username, password, date_of_birth, **extra_fields):
         roles = [Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, password, roles, **extra_fields)
+        return self._create_user(username, password, date_of_birth, roles, **extra_fields)
 
-    def create_superuser(self, username,  password, **extra_fields):
+    def create_superuser(self, username,  password, date_of_birth, **extra_fields):
         roles = [Role.objects.get(name=Role.ADMIN), Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', True)
-
-        return self._create_user(username, password, roles, **extra_fields)
+        return self._create_user(username, password, date_of_birth, roles,  **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
