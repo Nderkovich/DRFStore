@@ -21,6 +21,8 @@ class UserManager(BaseUserManager):
     def _create_user(self, username, password, date_of_birth, roles: List[Role], **extra_fields):
         values = [date_of_birth]
         field_value_map = dict(zip(self.model.REQUIRED_FIELDS, values))
+        if not password or len(password) < 8:
+            raise ValueError('Password length is invalid')
         for field_name, value in field_value_map.items():
             if not value:
                 raise ValueError('The {} value must be set'.format(field_name))
