@@ -18,46 +18,41 @@ class Role(models.Model):
 
 
 class UserManager(BaseUserManager):
-    def _create_user(self, username, password, date_of_birth, email, roles: List[Role], **extra_fields):
-        values = [date_of_birth, email]
-        field_value_map = dict(zip(self.model.REQUIRED_FIELDS, values))
+    def _create_user(self, password, email, roles: List[Role], **extra_fields):
         if not password or len(password) < 8:
             raise ValueError('Password length is invalid')
-        for field_name, value in field_value_map.items():
-            if not value:
-                raise ValueError('The {} value must be set'.format(field_name))
 
-        username = self.normalize_email(username)
+        email = self.normalize_email(email)
         user = self.model(
-            username=username,
-            **field_value_map,
+            email=email,
             **extra_fields
         )
         user.set_password(password)
+        user.clean_fields()
         user.save(using=self._db)
         for role in roles:
             user.roles.add(role.id)
         return user
 
-    def create_user(self, username, password, date_of_birth, email, **extra_fields):
+    def create_user(self, password, email, **extra_fields):
         roles = [Role.objects.get(name=Role.CLIENT)]
         extra_fields.setdefault('is_superuser', False)
-        return self._create_user(username, password, date_of_birth, email, roles, **extra_fields)
+        return self._create_user(password, email, roles, **extra_fields)
 
-    def create_superuser(self, username,  password, date_of_birth, email, **extra_fields):
+    def create_superuser(self, password, email, **extra_fields):
         roles = [Role.objects.get(name=Role.ADMIN)]
         extra_fields.setdefault('is_superuser', True)
-        return self._create_user(username, password, date_of_birth, email, roles,  **extra_fields)
+        return self._create_user(password, email, roles, **extra_fields)
 
 
 class User(AbstractBaseUser, PermissionsMixin):
     create_time = models.DateTimeField(auto_now_add=True)
     update_time = models.DateTimeField(auto_now=True)
     username = models.CharField(max_length=50, unique=True)
-    email = models.EmailField(max_length=70, null=False, unique=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    date_of_birth = models.DateField(null=False)
+    email = models.EmailField(max_length=70, blank=False, null=False, unique=True)
+    first_name = models.CharField(max_length=50, blank=True)
+    last_name = models.CharField(max_length=50, blank=True)
+    date_of_birth = models.DateField(blank=False, null=False)
 
     roles = models.ManyToManyField(Role)
 
