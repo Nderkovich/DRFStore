@@ -102,6 +102,12 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Authentication model
+
+
+AUTH_USER_MODEL = 'store.User'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
