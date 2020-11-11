@@ -13,7 +13,8 @@ class RoleSerializer(serializers.ModelSerializer):
 class AdminUserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'date_of_birth', 'create_time', 'update_time', 'roles']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_of_birth', 'create_time', 'update_time',
+                  'roles']
 
 
 class AdminUserDetailSerializer(serializers.ModelSerializer):
@@ -24,7 +25,8 @@ class AdminUserDetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'first_name', 'last_name', 'date_of_birth', 'create_time', 'update_time', 'roles']
+        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name', 'date_of_birth', 'create_time',
+                  'update_time', 'roles']
 
     def save(self, **kwargs):
         password = self.validated_data.pop('password', None)
