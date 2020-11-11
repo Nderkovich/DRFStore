@@ -4,10 +4,11 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-# Functions from the following migrations need manual copying.
-# Move them and any dependencies into this file, then update the
-# RunPython operations to refer to the local versions:
-# store.migrations.0001_database_creation
+def create_roles(apps, schema_editor):
+    Role = apps.get_model('store', 'Role')
+    admin_role = Role.objects.create(name='Admin')
+    client_role = Role.objects.create(name='Client')
+
 
 class Migration(migrations.Migration):
 
@@ -16,11 +17,6 @@ class Migration(migrations.Migration):
     dependencies = [
         ('auth', '0012_alter_user_first_name_max_length'),
     ]
-
-    def create_roles(apps, schema_editor):
-        Role = apps.get_model('store', 'Role')
-        admin_role = Role.objects.create(name='Admin')
-        client_role = Role.objects.create(name='Client')
 
     operations = [
         migrations.CreateModel(
