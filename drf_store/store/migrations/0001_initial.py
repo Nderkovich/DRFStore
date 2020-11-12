@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
                 ('is_superuser', models.BooleanField(default=False, help_text='Designates that this user has all permissions without explicitly assigning them.', verbose_name='superuser status')),
                 ('user_permissions', models.ManyToManyField(blank=True, help_text='Specific permissions for this user.', related_name='user_set', related_query_name='user', to='auth.Permission', verbose_name='user permissions')),
-                ('email', models.EmailField(default=1983, max_length=70, unique=True)),
+                ('email', models.EmailField(max_length=70, unique=True)),
             ],
         ),
         migrations.CreateModel(
@@ -80,10 +80,5 @@ class Migration(migrations.Migration):
             model_name='user',
             name='last_name',
             field=models.CharField(blank=True, max_length=50),
-        ),
-        migrations.AlterField(
-            model_name='user',
-            name='email',
-            field=models.EmailField(max_length=70, unique=True),
         ),
     ]
