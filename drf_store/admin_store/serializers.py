@@ -1,14 +1,14 @@
-from store.models import User, Role, Product, Order
+from store.models import User, Product, Order
 from rest_framework import serializers
 
 
-class AdminUserListSerializer(serializers.ModelSerializer):
+class UserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email']
 
 
-class AdminUserDetailSerializer(serializers.ModelSerializer):
+class UserDetailSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     create_time = serializers.DateTimeField(read_only=True)
     update_time = serializers.DateTimeField(read_only=True)
@@ -34,7 +34,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class OrderAdminSerializer(serializers.ModelSerializer):
+class OrderSerializer(serializers.ModelSerializer):
     ADMIN_ALLOWED_STATUS = ('IN_PROGRESS', 'APPROVED', 'DECLINED')
     status = serializers.ChoiceField(choices=ADMIN_ALLOWED_STATUS)
     user = serializers.CharField(read_only=True)

@@ -1,12 +1,11 @@
 from store.models import User, Product, Order
 from rest_framework import generics, permissions, viewsets
-from admin_store.serializers import AdminUserListSerializer, AdminUserDetailSerializer, ProductSerializer, \
-    OrderAdminSerializer
+from admin_store.serializers import UserListSerializer, UserDetailSerializer, ProductSerializer, OrderSerializer
 
 
 # User
 class UserList(generics.ListAPIView):
-    serializer_class = AdminUserListSerializer
+    serializer_class = UserListSerializer
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
@@ -19,7 +18,7 @@ class UserList(generics.ListAPIView):
 
 class UserDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = User.objects.all()
-    serializer_class = AdminUserDetailSerializer
+    serializer_class = UserDetailSerializer
     permission_classes = [permissions.IsAdminUser]
 
 
@@ -32,7 +31,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 # Order
 class OrderViewSet(viewsets.ModelViewSet):
-    serializer_class = OrderAdminSerializer
+    serializer_class = OrderSerializer
     permission_classes = [permissions.IsAdminUser]
 
     def get_queryset(self):
