@@ -2,14 +2,6 @@ from store.models import User, Role, Product, Order
 from rest_framework import serializers
 
 
-class RoleSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(read_only=True)
-
-    class Meta:
-        model = Role
-        fields = ['name']
-
-
 class AdminUserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -20,7 +12,7 @@ class AdminUserDetailSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     create_time = serializers.DateTimeField(read_only=True)
     update_time = serializers.DateTimeField(read_only=True)
-    roles = RoleSerializer(many=True, read_only=True)
+    roles = serializers.SlugRelatedField(many=True, read_only=True, slug_field='name')
 
     class Meta:
         model = User
