@@ -13,8 +13,7 @@ class RoleSerializer(serializers.ModelSerializer):
 class AdminUserListSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'date_of_birth', 'create_time', 'update_time',
-                  'roles']
+        fields = ['id', 'username', 'email']
 
 
 class AdminUserDetailSerializer(serializers.ModelSerializer):
